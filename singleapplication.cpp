@@ -78,14 +78,7 @@ void SingleApplicationPrivate::genBlockServerName( int timeout )
     if( options & SingleApplication::Mode::User ) {
 #ifdef Q_OS_WIN
         Q_UNUSED(timeout);
-        wchar_t username [ UNLEN + 1 ];
-        // Specifies size of the buffer on input
-        DWORD usernameLength = UNLEN + 1;
-        if( GetUserName( username, &usernameLength ) ) {
-            appData.addData( QString::fromWCharArray(username).toUtf8() );
-        } else {
-            appData.addData( QStandardPaths::standardLocations( QStandardPaths::HomeLocation ).join("").toUtf8() );
-        }
+        appData.addData( QStandardPaths::standardLocations( QStandardPaths::HomeLocation ).join("").toUtf8() );
 #endif
 #ifdef Q_OS_UNIX
         QString username;
