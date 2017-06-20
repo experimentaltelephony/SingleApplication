@@ -25,6 +25,7 @@
 
 #include <QtCore/QtGlobal>
 #include <QtNetwork/QLocalSocket>
+#include <QUrl>
 
 #ifndef QAPPLICATION_CLASS
   #define QAPPLICATION_CLASS QCoreApplication
@@ -114,10 +115,13 @@ public:
      * instance.
      */
     bool sendMessage( QByteArray message, int timeout = 100 );
+    bool event(QEvent *event);
+    bool notify(QObject *receiver, QEvent *event);
 
 Q_SIGNALS:
     void instanceStarted();
     void receivedMessage( quint32 instanceId, QByteArray message );
+    void fileOpen( QUrl path );
 
 private:
     SingleApplicationPrivate *d_ptr;

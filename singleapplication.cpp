@@ -22,9 +22,11 @@
 
 #include <cstdlib>
 
+#include <QFileOpenEvent>
 #include <QtCore/QDir>
 #include <QtCore/QProcess>
 #include <QtCore/QByteArray>
+#include <QException>
 #include <QtCore/QSemaphore>
 #include <QtCore/QSharedMemory>
 #include <QtCore/QStandardPaths>
@@ -449,3 +451,30 @@ bool SingleApplication::sendMessage( QByteArray message, int timeout )
     d->socket->waitForBytesWritten( timeout );
     return dataWritten;
 }
+
+bool SingleApplication::event(QEvent* event){
+        if (event->type() == QEvent::FileOpen) {
+            QFileOpenEvent *openEvent = static_cast<QFileOpenEvent *>(event);
+            if(openEvent->url().isEmpty() == false){
+                emit fileOpen(openEvent->url());
+            }
+       }
+       return QAPPLICATION_CLASS::event(event);
+}
+
+
+bool SingleApplication::notify(QObject* receiver, QEvent* event)
+{
+    try {
+        return QAPPLICATION_CLASS::notify(receiver, event);
+    } catch (QException &e) {
+        qFatal("Error %s sending event %s to object %s (%s)", 
+            e.what(), typeid(*event).name(), qPrintable(receiver->objectName()),
+            typeid(*receiver).name());
+    }        
+
+    // qFatal aborts, so this isn't really necessary
+    // but you might continue if you use a different logging lib
+    return false;
+}
+
