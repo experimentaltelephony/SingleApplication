@@ -489,16 +489,6 @@ bool SingleApplication::event(QEvent* event){
 
 bool SingleApplication::notify(QObject* receiver, QEvent* event)
 {
-    try {
         return QAPPLICATION_CLASS::notify(receiver, event);
-    } catch (QException &e) {
-        qFatal("Error %s sending event %s to object %s (%s)", 
-            e.what(), typeid(*event).name(), qPrintable(receiver->objectName()),
-            typeid(*receiver).name());
-    }        
-
-    // qFatal aborts, so this isn't really necessary
-    // but you might continue if you use a different logging lib
-    return false;
 }
 
